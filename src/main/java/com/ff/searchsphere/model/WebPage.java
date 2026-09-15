@@ -17,6 +17,7 @@ public class WebPage {
     private String title;
 
     private String content;
+    private int totalWords;
 
     private LocalDateTime createdAt;
 

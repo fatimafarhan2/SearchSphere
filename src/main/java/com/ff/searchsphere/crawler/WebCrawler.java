@@ -3,6 +3,8 @@ package com.ff.searchsphere.crawler;
 import java.util.*;
 import java.io.IOException;
 import java.net.URI;
+
+import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -10,6 +12,7 @@ import org.jsoup.select.Elements;
 import org.springframework.stereotype.Component;
 import com.ff.searchsphere.service.WebPageService;
 import com.ff.searchsphere.model.WebPage;
+
 
 @Component
 public class WebCrawler {
@@ -50,11 +53,13 @@ public class WebCrawler {
 
         try {
 
-            Document document = Jsoup
+            Connection.Response response = Jsoup
                     .connect(current.getUrl())
                     .timeout(5000)
                     .userAgent("SearchSphereBot/1.0")
-                    .get();
+                    .execute();
+
+            Document document = response.parse();
 
             try {
                 Thread.sleep(300);
@@ -64,13 +69,7 @@ public class WebCrawler {
 
             savePage(current, document);
 
-            System.out.println("Currently crawling: " + current.getUrl());
-
             processLinks(document, current, baseDomain, maxDepth);
-
-            System.out.println("Saved page: " + current.getUrl());
-            System.out.println("Page Title: " + document.title());
-            System.out.println("--------------------------------------");
 
             return true;
 
